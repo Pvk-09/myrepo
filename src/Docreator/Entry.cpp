@@ -2,20 +2,41 @@
 
 #include "NString.h"
 #include "NFile.h"
-
 #include "NDocData.h"
 #include "NFile.h"
+#include <iostream>
+#include <Windows.h>
 
-void Parse(std::string path);
+std::string Parse(std::string path);
 std::string Process(std::vector<NDocData> data);
+std::vector<std::string> GetFiles(std::string folder);
 
 auto main(int argc, char** argv) -> int
 {
+	if (argc == 1)
+	{
+		return 1;
+	}
+
+	if (argc == 2)
+	{
+		std::string path = argv[2];
+		std::vector<std::string> paths = GetFiles(path);
 	
+		for (const auto& p : paths)
+		{
+			if (NString::SplitNoEmpty(p, ".")[1] == "h" || NString::SplitNoEmpty(p, ".")[1] == "cpp")
+			{
+				std::string mdData = Parse(p);
+				NFile::WriteAllText(NString::ToUpper(NString::SplitNoEmpty(p, ".")[0]) + ".MD", mdData);
+			}
+		}
+	}
+
 	return false;
 }
 
-void Parse(std::string path)
+std::string Parse(std::string path)
 {
 	std::string allText = NFile::ReadAllText(path);
 	std::string MarkDown = "";
@@ -108,9 +129,28 @@ void Parse(std::string path)
 	}
 	MarkDown += Process(MemberDoc);
 	MarkDown += "\n";
+
+	return MarkDown;
 }
 
 std::string Process(std::vector<NDocData> data)
 {
 	return "";
+}
+
+std::vector<std::string> GetFiles(std::string folder)
+{
+	std::vector<std::string> names;
+	std::string search_path = folder + "/*.*";
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				names.push_back(fd.cFileName);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+	return names;
 }
