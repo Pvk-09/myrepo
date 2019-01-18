@@ -42,7 +42,16 @@ public:
 	static std::string FromVector(std::vector<std::string> temp);
 
 	static std::vector<std::wstring> ToVector(std::wstring temp);
-	static std::wstring FromVector(std::vector<std::wstring>);
+	static std::wstring FromVector(std::vector<std::wstring> temp);
+
+	static std::string FullTrim(std::string temp);
+	static std::wstring FullTrim(std::wstring temp);
+
+	static std::string TrimBegin(std::string temp);
+	static std::wstring TrimBegin(std::wstring temp);
+
+	static std::string TrimEnd(std::string temp);
+	static std::wstring TrimEnd(std::wstring temp);
 
 };
 

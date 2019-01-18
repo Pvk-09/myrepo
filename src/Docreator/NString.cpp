@@ -315,7 +315,6 @@ std::vector<std::wstring> NString::ToVector(std::wstring temp)
 	return SplitNoEmpty(temp, L"\n");
 }
 
-
 std::wstring NString::FromVector(std::vector<std::wstring> temp)
 {
 	std::wstring retS;
@@ -325,4 +324,38 @@ std::wstring NString::FromVector(std::vector<std::wstring> temp)
 		retS += L"\n";
 	}
 	return retS;
+}
+
+std::string NString::FullTrim(std::string temp)
+{
+	return TrimBegin(TrimEnd(temp));
+}
+
+std::wstring NString::FullTrim(std::wstring temp)
+{
+	return TrimBegin(TrimEnd(temp));
+}
+
+std::string NString::TrimBegin(std::string temp)
+{
+	temp.erase(0, temp.find_first_not_of(" \t\n\r\f\v"));
+	return temp;
+}
+
+std::wstring NString::TrimBegin(std::wstring temp)
+{
+	temp.erase(0, temp.find_first_not_of(L" \t\n\r\f\v"));
+	return temp;
+}
+
+std::string NString::TrimEnd(std::string temp)
+{
+	temp.erase(temp.find_last_not_of(" \t\n\r\f\v") + 1);
+	return temp;
+}
+
+std::wstring NString::TrimEnd(std::wstring temp)
+{
+	temp.erase(temp.find_last_not_of(L" \t\n\r\f\v") + 1);
+	return temp;
 }
