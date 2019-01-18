@@ -10,7 +10,7 @@ Because I personally dislike writing docs(They're painful) and really really pre
 
 # How to use?
 
-The Usage is quite easy all you have to do is open Docreator.exe from a console and give it the path to the directory where your source and header files are (It's not yet recursive) it'll the automatically read all the files and create documentationb based on the comments!
+The Usage is quite easy all you have to do is open Docreator.exe from a console and give it the path to the directory where your source and header files are(It's not yet recursive) it'll the automatically read all the files and create documentation based on the comments!
 
 ```docreator <path>``` 
 
