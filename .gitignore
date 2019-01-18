@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+*.db
+*.opendb
+src/Docreator/.vs/Docreator/v15/.suo
+src/.vs/Docreator/v15/.suo
+*.ipch
+*.ilk
+*.pdb
+*.tlog
+*.log
+*.idb
