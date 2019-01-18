@@ -136,7 +136,19 @@ std::string Parse(std::string path)
 
 std::string Process(std::vector<NDocData> data)
 {
-	return "";
+	std::string sData = "";
+	for (const auto& p : data)
+	{
+		sData += "###" + p.ident.Name + "\n";
+		for (int i = 1; i < p.lines.size(); i++)
+		{
+			sData += "**" + p.lines[i] + "**" + "\n";
+		}
+		sData += "**" + p.ident.Type + " " + p.ident.Name + "**" + "\n";
+		sData += "#### **Description:** " + p.lines[0] + "\n\n";
+	}
+	
+	return sData;
 }
 
 std::vector<std::string> GetFiles(std::string folder)
