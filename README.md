@@ -54,10 +54,10 @@ NColor* foreground;
 
 ```cpp
 //-->DOC_FUNC
-// DESCRIPTION
+// calculate the sum of two given numbers.
 // a: first number
 // b: second number
-// returns the sum of the first and the second number
+// returns: the sum of the first and the second number
 int Sum(int a, int b)
 {
   return a + b;
