@@ -148,6 +148,7 @@ std::string Process(std::vector<NDocData> data)
 		sData += "#### **Description:** " + p.lines[0] + "\n\n";
 	}
 	
+	sData += "\n###### Made with [Docreator](https://github.com/nirex0/docreator)";
 	return sData;
 }
 
