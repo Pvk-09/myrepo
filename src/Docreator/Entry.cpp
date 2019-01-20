@@ -169,11 +169,8 @@ std::string Parse(std::string path)
 		nDocData.lines = NString::ToVector(NString::Split(MemberData[i], ";")[0]);
 		nDocData.type = "member";
 
-		nDocData.ident.Name = NString::Split(NString::Split(MemberData[i], ";")[0], " ")[1];
-		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
-
-		nDocData.ident.Type = NString::Split(NString::Split(MemberData[i], ";")[0], " ")[0];
-		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+		nDocData.ident.Name = NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[1]);
+		nDocData.ident.Type = NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[0]);
 
 		MemberDoc.push_back(nDocData);
 	}
