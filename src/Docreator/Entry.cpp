@@ -187,7 +187,15 @@ std::string Process(std::vector<NDocData> data)
 	std::string sData = "";
 	for (const auto& p : data)
 	{
-		sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n\n";
+		if (p.type != "function")
+		{
+			sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n\n";
+		}
+		else
+		{
+			sData += "### **" + NString::ToUpper(p.type) + "**: " + NString::Split(p.ident.Name, "(")[0] + "\n\n";
+		}
+
 		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n\n";
 		for (int i = 1; i < p.lines.size() - 1; i++)
 		{
