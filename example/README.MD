@@ -34,18 +34,18 @@ DESC LINE 2
 DESC LINE 1
 
 ----------
-### **MEMBER**: LINE
+### **MEMBER**: pNext
 
-``` //DESC LINE ```
+``` FOO* pNext ```
 
 DESC LINE 2
 
 #### **Description:**
 DESC LINE 1
 
-### **MEMBER**: LINE
+### **MEMBER**: pPrev
 
-``` //DESC LINE ```
+``` FOO* pPrev ```
 
 DESC LINE 2
 
