@@ -213,13 +213,16 @@ std::vector<std::string> GetFiles(std::string folder)
 	std::string search_path = folder + "/*.*";
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
-	if (hFind != INVALID_HANDLE_VALUE) {
-		do {
-			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+	if (hFind != INVALID_HANDLE_VALUE) 
+	{
+		do 
+		{
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) 
+			{
 				names.push_back(fd.cFileName);
 			}
-		} while (::FindNextFile(hFind, &fd));
-		::FindClose(hFind);
+		} while (FindNextFile(hFind, &fd));
+		FindClose(hFind);
 	}
 	return names;
 }
