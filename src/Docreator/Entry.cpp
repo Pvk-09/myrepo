@@ -13,26 +13,21 @@ std::vector<std::string> GetFiles(std::string folder);
 
 auto main(int argc, char** argv) -> int
 {
-	if (argc == 1)
+	UNREFERENCED_PARAMETER(argc);
+	UNREFERENCED_PARAMETER(argv);
+
+	std::string path;
+	std::cout << "Enter the path: ";
+	std::cin >> path;
+
+	std::vector<std::string> paths = GetFiles(path);
+
+	for (const auto& p : paths)
 	{
-		std::cout << "Usage: docreator <folder path>\n";
-		return true;
-	}
-
-	if (argc == 2)
-	{
-		std::string path = argv[2];
-
-		std::string path = "C:\\Users\\Nirex\\Documents\\GitHub\\Docreator\\src\\Docreator\\A";
-		std::vector<std::string> paths = GetFiles(path);
-
-		for (const auto& p : paths)
+		if (NString::Split(p, ".")[1] == "h" || NString::Split(p, ".")[1] == "cpp")
 		{
-			if (NString::Split(p, ".")[1] == "h" || NString::Split(p, ".")[1] == "cpp")
-			{
-				std::string mdData = Parse(path + "\\" + p);
-				NFile::WriteAllText(NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
-			}
+			std::string mdData = Parse(path + "\\" + p);
+			NFile::WriteAllText(NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
 		}
 	}
 
@@ -159,11 +154,11 @@ std::string Process(std::vector<NDocData> data)
 	std::string sData = "";
 	for (const auto& p : data)
 	{
-		sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n";
-		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n";
+		sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n\n";
+		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n\n";
 		for (int i = 1; i < p.lines.size() - 1; i++)
 		{
-			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n";
+			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n\n";
 		}
 		sData += "#### **Description:**\n" + NString::Split(p.lines[0],"//")[1] + "\n\n";
 	}
