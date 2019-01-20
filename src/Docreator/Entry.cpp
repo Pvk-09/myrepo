@@ -15,21 +15,23 @@ auto main(int argc, char** argv) -> int
 {
 	if (argc == 1)
 	{
-		std::cout << "Usage: docreator -<folder path>\n";
-		return 1;
+		std::cout << "Usage: docreator <folder path>\n";
+		return true;
 	}
 
 	if (argc == 2)
 	{
 		std::string path = argv[2];
+
+		std::string path = "C:\\Users\\Nirex\\Documents\\GitHub\\Docreator\\src\\Docreator\\A";
 		std::vector<std::string> paths = GetFiles(path);
-	
+
 		for (const auto& p : paths)
 		{
-			if (NString::SplitNoEmpty(p, ".")[1] == "h" || NString::SplitNoEmpty(p, ".")[1] == "cpp")
+			if (NString::Split(p, ".")[1] == "h" || NString::Split(p, ".")[1] == "cpp")
 			{
-				std::string mdData = Parse(p);
-				NFile::WriteAllText(NString::ToUpper(NString::SplitNoEmpty(p, ".")[0]) + ".MD", mdData);
+				std::string mdData = Parse(path + "\\" + p);
+				NFile::WriteAllText(NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
 			}
 		}
 	}
@@ -47,20 +49,25 @@ std::string Parse(std::string path)
 	// class X
 	// {
 	std::vector<NDocData> ClassDoc;
-	std::vector<std::string> ClassData = NString::SplitNoEmpty(allText, "//-->DOC_CLASS");
+	std::vector<std::string> ClassData = NString::Split(allText, "//-->DOC_CLASS");
+
 	for (size_t i = 1; i < ClassData.size(); i++)
 	{
-		ClassDoc.push_back(NDocData());
-		ClassDoc[i].lines = NString::ToVector(NString::SplitNoEmpty(ClassData[i], "{")[0]);
-		ClassDoc[i].type = "class";
+		NDocData nDocData;
 
-		ClassDoc[i].ident.Name = NString::SplitNoEmpty(NString::SplitNoEmpty(ClassData[i], "{")[0], "class ")[1];
-		ClassDoc[i].ident.Name = NString::FullTrim(ClassDoc[i].ident.Name);
+		nDocData.lines = NString::ToVector(NString::Split(ClassData[i], "{")[0]);
+		nDocData.type = "class";
+		
+		nDocData.ident.Name = NString::Split(NString::Split(ClassData[i], "{")[0], "class ")[1];
+		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
+		
+		nDocData.ident.Type = nDocData.type;
+		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
 
-		ClassDoc[i].ident.Type = ClassDoc[i].type;
-		ClassDoc[i].ident.Type = NString::FullTrim(ClassDoc[i].ident.Type);
+		ClassDoc.push_back(nDocData);
 	}
 	MarkDown += Process(ClassDoc);
+	MarkDown += "----------";
 	MarkDown += "\n";
 
 	// //-->DOC_FUNC
@@ -72,22 +79,26 @@ std::string Parse(std::string path)
 	// int X(int a, int b, int c)
 	// {
 	std::vector<NDocData> FuncDoc;
-	std::vector<std::string> FuncData = NString::SplitNoEmpty(allText, "//-->DOC_FUNC");
+	std::vector<std::string> FuncData = NString::Split(allText, "//-->DOC_FUNC");
 	for (size_t i = 1; i < FuncData.size(); i++)
 	{
-		FuncData[i] = NString::SplitNoEmpty(FuncData[i], "{")[0];
+		NDocData nDocData;
 
-		FuncDoc.push_back(NDocData());
-		FuncDoc[i].lines = NString::ToVector(NString::SplitNoEmpty(FuncData[i], "{")[0]);
-		FuncDoc[i].type = "function";
+		nDocData.lines = NString::ToVector(NString::Split(FuncData[i], ")")[0]);
+		nDocData.type = "function";
 
-		FuncDoc[i].ident.Name = NString::SplitNoEmpty(NString::SplitNoEmpty(FuncData[i], "(")[0], " ")[1];
-		FuncDoc[i].ident.Name = NString::FullTrim(FuncDoc[i].ident.Name);
+		std::string tmpName = NString::FullTrim(NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[0], " ")[1]);
+		std::string withinP = NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[1], ")")[0];
 
-		FuncDoc[i].ident.Type = NString::SplitNoEmpty(NString::SplitNoEmpty(FuncData[i], "(")[0], " ")[0];
-		FuncDoc[i].ident.Type = NString::FullTrim(FuncDoc[i].ident.Type);
+		nDocData.ident.Name = tmpName + "(" + withinP + "); ";
+
+		nDocData.ident.Type = NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[0], " ")[0];
+		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+
+		FuncDoc.push_back(nDocData);
 	}
 	MarkDown += Process(FuncDoc);
+	MarkDown += "----------";
 	MarkDown += "\n";
 
 	// //-->DOC_STRUCT
@@ -95,42 +106,51 @@ std::string Parse(std::string path)
 	// struct X
 	// {
 	std::vector<NDocData> StructDoc;
-	std::vector<std::string> StructData = NString::SplitNoEmpty(allText, "//-->DOC_STRUCT");
+	std::vector<std::string> StructData = NString::Split(allText, "//-->DOC_STRUCT");
 	for (size_t i = 1; i < StructData.size(); i++)
 	{
-		StructDoc.push_back(NDocData());
-		StructDoc[i].lines = NString::ToVector(NString::SplitNoEmpty(StructData[i], "{")[0]);
-		StructDoc[i].type = "struct";
+		NDocData nDocData;
 
-		StructDoc[i].ident.Name = NString::SplitNoEmpty(NString::SplitNoEmpty(StructData[i], "{")[0], "struct ")[1];
-		StructDoc[i].ident.Name = NString::FullTrim(StructDoc[i].ident.Name);
+		nDocData.lines = NString::ToVector(NString::Split(StructData[i], "{")[0]);
+		nDocData.type = "struct";
 
-		StructDoc[i].ident.Type = StructDoc[i].type;
-		StructDoc[i].ident.Type = NString::FullTrim(StructDoc[i].ident.Type);
+		nDocData.ident.Name = NString::Split(NString::Split(StructData[i], "{")[0], "struct ")[1];
+		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
+
+		nDocData.ident.Type = nDocData.type;
+		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+
+		StructDoc.push_back(nDocData);
 	}
 	MarkDown += Process(StructDoc);
+	MarkDown += "----------";
 	MarkDown += "\n";
 
 	// //-->DOC_MEMBER
 	// // DESCRIPTION
 	// void* pX;
 	std::vector<NDocData> MemberDoc;
-	std::vector<std::string> MemberData = NString::SplitNoEmpty(allText, "//-->DOC_MEMBER");
+	std::vector<std::string> MemberData = NString::Split(allText, "//-->DOC_MEMBER");
 	for (size_t i = 1; i < MemberData.size(); i++)
 	{
-		MemberDoc.push_back(NDocData());
-		MemberDoc[i].lines = NString::ToVector(NString::SplitNoEmpty(MemberData[i], ";")[0]);
-		MemberDoc[i].type = "member";
+		NDocData nDocData;
 
-		MemberDoc[i].ident.Name = NString::SplitNoEmpty(NString::SplitNoEmpty(StructData[i], ";")[0], " ")[1];
-		MemberDoc[i].ident.Name = NString::FullTrim(MemberDoc[i].ident.Name);
+		nDocData.lines = NString::ToVector(NString::Split(MemberData[i], ";")[0]);
+		nDocData.type = "member";
 
-		MemberDoc[i].ident.Type = NString::SplitNoEmpty(NString::SplitNoEmpty(StructData[i], ";")[0], " ")[0];
-		MemberDoc[i].ident.Type = NString::FullTrim(MemberDoc[i].ident.Type);
+		nDocData.ident.Name = NString::Split(NString::Split(MemberData[i], ";")[0], " ")[1];
+		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
+
+		nDocData.ident.Type = NString::Split(NString::Split(MemberData[i], ";")[0], " ")[0];
+		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+
+		MemberDoc.push_back(nDocData);
 	}
 	MarkDown += Process(MemberDoc);
+	MarkDown += "----------";
 	MarkDown += "\n";
 
+	MarkDown += "\n###### Made with [Docreator](https://github.com/nirex0/docreator)";
 	return MarkDown;
 }
 
@@ -139,16 +159,15 @@ std::string Process(std::vector<NDocData> data)
 	std::string sData = "";
 	for (const auto& p : data)
 	{
-		sData += "###" + p.ident.Name + "\n";
-		for (int i = 1; i < p.lines.size(); i++)
+		sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n";
+		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n";
+		for (int i = 1; i < p.lines.size() - 1; i++)
 		{
-			sData += "**" + p.lines[i] + "**" + "\n";
+			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n";
 		}
-		sData += "**" + p.ident.Type + " " + p.ident.Name + "**" + "\n";
-		sData += "#### **Description:** " + p.lines[0] + "\n\n";
+		sData += "#### **Description:**\n" + NString::Split(p.lines[0],"//")[1] + "\n\n";
 	}
 	
-	sData += "\n###### Made with [Docreator](https://github.com/nirex0/docreator)";
 	return sData;
 }
 
