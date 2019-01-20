@@ -63,7 +63,7 @@ auto main(int argc, char** argv) -> int
 		if (NString::Split(p, ".")[1] == "h" || NString::Split(p, ".")[1] == "cpp")
 		{
 			std::string mdData = Parse(path + "\\" + p);
-			NFile::WriteAllText(NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
+			NFile::WriteAllText(path + "\\" + NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
 		}
 	}
 
