@@ -8,7 +8,7 @@ DESC LINE 2
 DESC LINE 1
 
 ----------
-### **FUNCTION**: BAR(int x, int y, FOO* pFoo); 
+### **FUNCTION**: BAR
 
 ``` void BAR(int x, int y, FOO* pFoo);  ```
 
@@ -24,9 +24,9 @@ OUTPUT
 DESC LINE 1
 
 ----------
-### **STRUCT**: StuffCreator
+### **STRUCT**: CUX
 
-``` struct StuffCreator ```
+``` struct CUX ```
 
 DESC LINE 2
 

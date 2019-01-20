@@ -30,7 +30,7 @@ public:
 //-->DOC_STRUCT
 //DESC LINE 1
 //DESC LINE 2
-struct StuffCreator
+struct CUX
 {
 	
 };
