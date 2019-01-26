@@ -48,30 +48,21 @@ bool FileValidation(const std::string& ext)
 {
 	std::string lExt = NString::ToLower(ext);
 
-	// Normal C++ Source Uncommon C++ Header files
-	if (lExt== "cpp") return true;
-	else if (lExt== "hpp") return true;
+	// Uncommon C++ Header files
+	if (lExt == "hpp") return true;
 	
-	// Rare C++ Source And Header files
-	else if (lExt== "c++") return true;
-	else if (lExt== "h++") return true;
+	// Rare Header files
+	else if (lExt == "h++") return true;
 
-	// Rare C++ Source And Header files
-	else if (lExt== "cxx") return true;
-	else if (lExt== "hxx") return true;
+	// Rare Header files
+	else if (lExt == "hxx") return true;
 
-	// Rare C++ Source And Header files
-	else if (lExt== "cc") return true;
-	else if (lExt== "hh") return true;
+	// Rare Header files
+	else if (lExt == "hh") return true;
 
-	// Normal C Source and Normal C++ Header files
-	else if (lExt== "c") return true;
-	else if (lExt== "h") return true;
+	// Normal C++ Header files
+	else if (lExt == "h") return true;
 
-	// C# and Java Source files
-	else if (lExt== "cs") return true;
-	else if (lExt== "java") return true;
-	
 	// Any other file
 	else return false;
 }
@@ -111,9 +102,20 @@ std::string Parse(std::string path)
 
 		ClassDoc.push_back(nDocData);
 	}
+
+	if (ClassData.size() > 1)
+	{
+		MarkDown += "**CLASSES:**\n";
+		MarkDown += "============\n";
+		MarkDown += "----------\n";
+	}
+
 	MarkDown += processor->Process(ClassDoc);
-	MarkDown += "----------";
-	MarkDown += "\n";
+
+	if (ClassData.size() > 1)
+	{
+		MarkDown += "----------\n";
+	}
 
 	// //-->DOC_FUNC
 	// // DESCRIPTION
@@ -129,7 +131,7 @@ std::string Parse(std::string path)
 	{
 		NDocData nDocData;
 
-		nDocData.lines = NString::ToVector(NString::SplitNoEmpty(FuncData[i], "{")[0]);
+		nDocData.lines = NString::ToVector(NString::SplitNoEmpty(FuncData[i], ";")[0]);
 
 		std::string lastLine = nDocData.lines[nDocData.lines.size() - 1];
 
@@ -146,9 +148,20 @@ std::string Parse(std::string path)
 
 		FuncDoc.push_back(nDocData);
 	}
+
+	if (FuncData.size() > 1)
+	{
+		MarkDown += "**FUNCTIONS & METHODS:**\n";
+		MarkDown += "========================\n";
+		MarkDown += "----------\n";
+	}
+
 	MarkDown += processor->FunctionProcess(FuncDoc);
-	MarkDown += "----------";
-	MarkDown += "\n";
+
+	if (FuncData.size() > 1)
+	{
+		MarkDown += "----------\n";
+	}
 
 	// //-->DOC_STRUCT
 	// // DESCRIPTION
@@ -176,9 +189,20 @@ std::string Parse(std::string path)
 
 		StructDoc.push_back(nDocData);
 	}
+
+	if (StructData.size() > 1)
+	{
+		MarkDown += "**STRUCTURES:**\n";
+		MarkDown += "===============\n";
+		MarkDown += "----------\n";
+	}
+
 	MarkDown += processor->Process(StructDoc);
-	MarkDown += "----------";
-	MarkDown += "\n";
+	
+	if (StructData.size() > 1)
+	{
+		MarkDown += "----------\n";
+	}
 
 	// //-->DOC_MEMBER
 	// // DESCRIPTION
@@ -200,9 +224,20 @@ std::string Parse(std::string path)
 
 		MemberDoc.push_back(nDocData);
 	}
+	
+	if (MemberData.size() > 1)
+	{
+		MarkDown += "**MEMBERS:**\n";
+		MarkDown += "===============\n";
+		MarkDown += "----------\n";
+	}
+
 	MarkDown += processor->Process(MemberDoc);
-	MarkDown += "----------";
-	MarkDown += "\n";
+	
+	if (MemberData.size() > 1)
+	{
+		MarkDown += "----------\n";
+	}
 
 	MarkDown += "\n###### Generated with [Docreator](https://github.com/nirex0/docreator)";
 
@@ -210,9 +245,4 @@ std::string Parse(std::string path)
 	delete parser;
 
 	return MarkDown;
-}
-
-std::vector<std::string> GetFiles(std::string folder)
-{
-
 }
