@@ -34,3 +34,27 @@ NameType NParser::ParseFunction(const std::string& instr)
 
 	return retmap;
 }
+
+NameType NParser::ParseClass(const std::string& instr)
+{
+	std::map<std::string, std::string> retmap;
+
+	std::string name = NString::FullTrim(NString::Split(instr, " ")[1]);
+	
+	retmap.emplace("name", name);
+	retmap.emplace("type", "class");
+
+	return retmap;
+}
+
+NameType NParser::ParseStruct(const std::string & instr)
+{
+	std::map<std::string, std::string> retmap;
+
+	std::string name = NString::FullTrim(NString::Split(instr, " ")[1]);
+
+	retmap.emplace("name", name);
+	retmap.emplace("type", "struct");
+
+	return retmap;
+}

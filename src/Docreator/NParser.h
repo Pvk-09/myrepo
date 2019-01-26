@@ -18,6 +18,12 @@ public:
 
 	// ["name": name, "type": type, "inputs": inputs]
 	NameType ParseFunction(const std::string& instr);
+
+	// ["name": name, "type": "class"]
+	NameType ParseClass(const std::string& instr);
+
+	// ["name": name, "type": "struct"]
+	NameType ParseStruct(const std::string& instr);
 };
 
 #endif // !_N_PARSER_H_
