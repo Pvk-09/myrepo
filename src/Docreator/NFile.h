@@ -25,6 +25,8 @@ public:
 	 
 	static bool SafeFread(void* buffer, int size, int number, FILE* fp);
 	static bool SafeFWrite(void* buffer, int size, int number, FILE* fp);
+
+	static std::vector<std::string> GetFiles(std::string folder);
 };
 
 #endif // !_N_FILE_H_

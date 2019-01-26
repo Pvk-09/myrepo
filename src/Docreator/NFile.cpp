@@ -1,5 +1,6 @@
 //© 2018 NIREX ALL RIGHTS RESERVED
 
+#include "NWin.h"
 #include "NFile.h"
 
 std::string NFile::ReadAllText(std::string file)
@@ -148,5 +149,27 @@ bool NFile::SafeFWrite(void* buffer, int size, int number, FILE* fp)
 		return false;
 	}
 	return true;
+}
+
+std::vector<std::string> NFile::GetFiles(std::string folder)
+{
+	std::vector<std::string> names;
+	std::string search_path = folder + "/*.*";
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = FindFirstFile(search_path.c_str(), &fd);
+
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
+			if (!(fd.dwFileAttributes& FILE_ATTRIBUTE_DIRECTORY))
+			{
+				names.push_back(fd.cFileName);
+			}
+		} while (FindNextFile(hFind, &fd));
+		FindClose(hFind);
+	}
+	return names;
 }
 	
