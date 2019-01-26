@@ -91,13 +91,18 @@ std::string Parse(std::string path)
 		NDocData nDocData;
 
 		nDocData.lines = NString::ToVector(NString::Split(ClassData[i], "{")[0]);
-		nDocData.type = "class";
-		
-		nDocData.ident.Name = NString::Split(NString::Split(ClassData[i], "{")[0], "class ")[1];
-		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
-		
-		nDocData.ident.Type = nDocData.type;
-		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+		std::string lastLine = nDocData.lines[nDocData.lines.size() - 1];
+
+		if (NString::FullTrim(lastLine) == "")
+		{
+			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
+		}
+
+		std::map<std::string, std::string> ntData = parser.ParseClass(nDocData.lines[nDocData.lines.size() - 1]);
+
+		nDocData.type = NString::FullTrim(ntData["type"]);
+		nDocData.ident.Name = NString::FullTrim(ntData["name"]);
+		nDocData.code = nDocData.lines[nDocData.lines.size() - 1];
 
 		ClassDoc.push_back(nDocData);
 	}
@@ -132,6 +137,7 @@ std::string Parse(std::string path)
 
 		nDocData.ident.Name = ntData["type"] + " " + ntData["name"] + " " + ntData["inputs"];
 		nDocData.type = "function";
+		nDocData.code = nDocData.lines[nDocData.lines.size() - 1];
 
 		FuncDoc.push_back(nDocData);
 	}
@@ -150,13 +156,18 @@ std::string Parse(std::string path)
 		NDocData nDocData;
 
 		nDocData.lines = NString::ToVector(NString::Split(StructData[i], "{")[0]);
-		nDocData.type = "struct";
+		std::string lastLine = nDocData.lines[nDocData.lines.size() - 1];
 
-		nDocData.ident.Name = NString::Split(NString::Split(StructData[i], "{")[0], "struct ")[1];
-		nDocData.ident.Name = NString::FullTrim(nDocData.ident.Name);
+		if (NString::FullTrim(lastLine) == "")
+		{
+			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
+		}
 
-		nDocData.ident.Type = nDocData.type;
-		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
+		std::map<std::string, std::string> ntData = parser.ParseStruct(nDocData.lines[nDocData.lines.size() - 1]);
+
+		nDocData.type = NString::FullTrim(ntData["type"]);
+		nDocData.ident.Name = NString::FullTrim(ntData["name"]);
+		nDocData.code = nDocData.lines[nDocData.lines.size() - 1];
 
 		StructDoc.push_back(nDocData);
 	}
@@ -178,8 +189,9 @@ std::string Parse(std::string path)
 
 		std::map<std::string, std::string> ntData = parser.ParseMember(nDocData.lines[nDocData.lines.size() - 1]);
 
-		nDocData.ident.Name = ntData["name"];  //NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[1]);
-		nDocData.ident.Type = ntData["type"]; //NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[0]);
+		nDocData.ident.Name = ntData["name"]; 
+		nDocData.ident.Type = ntData["type"];
+		nDocData.code = nDocData.lines[nDocData.lines.size() - 1];
 
 		MemberDoc.push_back(nDocData);
 	}
@@ -208,7 +220,7 @@ std::string Process(std::vector<NDocData> data)
 			sData += "### **" + NString::ToUpper(p.type) + "**: " + NString::FullTrim(name) + "\n\n";
 		}
 
-		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n\n";
+		sData += "``` " + NString::FullTrim(p.code) + " ```" + "\n\n";
 		for (int i = 1; i < p.lines.size() - 1; i++)
 		{
 			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n\n";
