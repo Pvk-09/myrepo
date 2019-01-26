@@ -1,42 +1,6 @@
 // © 2018 NIREX ALL RIGHTS RESERVED
 
-#define WIN32_LEAN_AND_MEAN
-#define NOGDICAPMASKS
-#define NOSYSMETRICS
-#define NOMENUS
-#define NOICONS
-#define NOSYSCOMMANDS
-#define NORASTEROPS
-#define OEMRESOURCE
-#define NOATOM
-#define NOCLIPBOARD
-#define NOCOLOR
-#define NOCTLMGR
-#define NODRAWTEXT
-#define NOKERNEL
-#define NONLS
-#define NOMEMMGR
-#define NOMETAFILE
-#define NOMINMAX
-#define NOOPENFILE
-#define NOSCROLL
-#define NOSERVICE
-#define NOSOUND
-#define NOTEXTMETRIC
-#define NOWH
-#define NOCOMM
-#define NOKANJI
-#define NOHELP
-#define NOPROFILER
-#define NODEFERWINDOWPOS
-#define NOMCX
-#define NORPC
-#define NOPROXYSTUB
-#define NOIMAGE
-#define NOTAPE
-#define STRICT
-
-#include <Windows.h>
+#include "NWin.h"
 #include <iostream>
 #include <map>
 
@@ -45,10 +9,9 @@
 #include "NFile.h"
 #include "NDocData.h"
 #include "NFile.h"
+#include "NProcessor.h"
 
 std::string Parse(std::string path);
-std::string Process(std::vector<NDocData> data);
-std::vector<std::string> GetFiles(std::string folder);
 
 auto main(int argc, char** argv) -> int
 {
@@ -59,7 +22,7 @@ auto main(int argc, char** argv) -> int
 	std::cout << "Enter the path: ";
 	std::cin >> path;
 
-	std::vector<std::string> paths = GetFiles(path);
+	std::vector<std::string> paths = NFile::GetFiles(path);
 
 	for (const auto& p : paths)
 	{
@@ -75,7 +38,9 @@ auto main(int argc, char** argv) -> int
 
 std::string Parse(std::string path)
 {
-	NParser parser;
+	NParser* parser = new NParser();
+	NProcessor* processor = new NProcessor();
+
 	std::string allText = NFile::ReadAllText(path);
 	std::string MarkDown = "";
 
@@ -98,7 +63,7 @@ std::string Parse(std::string path)
 			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
 		}
 
-		std::map<std::string, std::string> ntData = parser.ParseClass(nDocData.lines[nDocData.lines.size() - 1]);
+		std::map<std::string, std::string> ntData = parser->ParseClass(nDocData.lines[nDocData.lines.size() - 1]);
 
 		nDocData.type = NString::FullTrim(ntData["type"]);
 		nDocData.ident.Name = NString::FullTrim(ntData["name"]);
@@ -106,7 +71,7 @@ std::string Parse(std::string path)
 
 		ClassDoc.push_back(nDocData);
 	}
-	MarkDown += Process(ClassDoc);
+	MarkDown += processor->Process(ClassDoc);
 	MarkDown += "----------";
 	MarkDown += "\n";
 
@@ -133,7 +98,7 @@ std::string Parse(std::string path)
 			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
 		}
 
-		std::map<std::string, std::string> ntData = parser.ParseFunction(nDocData.lines[nDocData.lines.size() - 1]);
+		std::map<std::string, std::string> ntData = parser->ParseFunction(nDocData.lines[nDocData.lines.size() - 1]);
 
 		nDocData.ident.Name = ntData["type"] + " " + ntData["name"] + " " + ntData["inputs"];
 		nDocData.type = "function";
@@ -141,7 +106,7 @@ std::string Parse(std::string path)
 
 		FuncDoc.push_back(nDocData);
 	}
-	MarkDown += Process(FuncDoc);
+	MarkDown += processor->FunctionProcess(FuncDoc);
 	MarkDown += "----------";
 	MarkDown += "\n";
 
@@ -163,7 +128,7 @@ std::string Parse(std::string path)
 			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
 		}
 
-		std::map<std::string, std::string> ntData = parser.ParseStruct(nDocData.lines[nDocData.lines.size() - 1]);
+		std::map<std::string, std::string> ntData = parser->ParseStruct(nDocData.lines[nDocData.lines.size() - 1]);
 
 		nDocData.type = NString::FullTrim(ntData["type"]);
 		nDocData.ident.Name = NString::FullTrim(ntData["name"]);
@@ -171,7 +136,7 @@ std::string Parse(std::string path)
 
 		StructDoc.push_back(nDocData);
 	}
-	MarkDown += Process(StructDoc);
+	MarkDown += processor->Process(StructDoc);
 	MarkDown += "----------";
 	MarkDown += "\n";
 
@@ -187,7 +152,7 @@ std::string Parse(std::string path)
 		nDocData.lines = NString::ToVector(NString::Split(MemberData[i], ";")[0]);
 		nDocData.type = "member";
 
-		std::map<std::string, std::string> ntData = parser.ParseMember(nDocData.lines[nDocData.lines.size() - 1]);
+		std::map<std::string, std::string> ntData = parser->ParseMember(nDocData.lines[nDocData.lines.size() - 1]);
 
 		nDocData.ident.Name = ntData["name"]; 
 		nDocData.ident.Type = ntData["type"];
@@ -195,60 +160,19 @@ std::string Parse(std::string path)
 
 		MemberDoc.push_back(nDocData);
 	}
-	MarkDown += Process(MemberDoc);
+	MarkDown += processor->Process(MemberDoc);
 	MarkDown += "----------";
 	MarkDown += "\n";
 
-	MarkDown += "\n###### Made with [Docreator](https://github.com/nirex0/docreator)";
+	MarkDown += "\n###### Generated with [Docreator](https://github.com/nirex0/docreator)";
+
+	delete processor;
+	delete parser;
+
 	return MarkDown;
-}
-
-std::string Process(std::vector<NDocData> data)
-{
-	std::string sData = "";
-	for (const auto& p : data)
-	{
-		if (p.type != "function")
-		{
-			sData += "### **" + NString::ToUpper(p.type) + "**: " + p.ident.Name + "\n\n";
-		}
-		else
-		{
-			std::string name = NString::FullTrim(NString::Split(p.ident.Name, "(")[0]);
-			name = NString::Split(name, " ")[NString::Split(name, " ").size() - 1];
-
-			sData += "### **" + NString::ToUpper(p.type) + "**: " + NString::FullTrim(name) + "\n\n";
-		}
-
-		sData += "``` " + NString::FullTrim(p.code) + " ```" + "\n\n";
-		for (int i = 1; i < p.lines.size() - 1; i++)
-		{
-			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n\n";
-		}
-		sData += "#### **Description:**\n" + NString::Split(p.lines[0],"//")[1] + "\n\n";
-	}
-	
-	return sData;
 }
 
 std::vector<std::string> GetFiles(std::string folder)
 {
-	std::vector<std::string> names;
-	std::string search_path = folder + "/*.*";
-	
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile(search_path.c_str(), &fd);
 
-	if (hFind != INVALID_HANDLE_VALUE) 
-	{
-		do 
-		{
-			if (!(fd.dwFileAttributes& FILE_ATTRIBUTE_DIRECTORY)) 
-			{
-				names.push_back(fd.cFileName);
-			}
-		} while (FindNextFile(hFind, &fd));
-		FindClose(hFind);
-	}
-	return names;
 }
