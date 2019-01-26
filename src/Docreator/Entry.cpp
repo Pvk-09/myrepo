@@ -48,7 +48,7 @@ bool FileValidation(const std::string& ext)
 {
 	std::string lExt = NString::ToLower(ext);
 
-	// Normal C source Uncommon C++ Header files
+	// Normal C++ Source Uncommon C++ Header files
 	if (lExt== "cpp") return true;
 	else if (lExt== "hpp") return true;
 	
@@ -64,11 +64,11 @@ bool FileValidation(const std::string& ext)
 	else if (lExt== "cc") return true;
 	else if (lExt== "hh") return true;
 
-	// Normal C cource and Normal C++ Header files
+	// Normal C Source and Normal C++ Header files
 	else if (lExt== "c") return true;
 	else if (lExt== "h") return true;
 
-	// C# and Java source files
+	// C# and Java Source files
 	else if (lExt== "cs") return true;
 	else if (lExt== "java") return true;
 	
