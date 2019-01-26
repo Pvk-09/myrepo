@@ -37,11 +37,14 @@
 #define STRICT
 
 #include <Windows.h>
+#include <iostream>
+#include <map>
+
+#include "NParser.h"
 #include "NString.h"
 #include "NFile.h"
 #include "NDocData.h"
 #include "NFile.h"
-#include <iostream>
 
 std::string Parse(std::string path);
 std::string Process(std::vector<NDocData> data);
@@ -72,6 +75,7 @@ auto main(int argc, char** argv) -> int
 
 std::string Parse(std::string path)
 {
+	NParser parser;
 	std::string allText = NFile::ReadAllText(path);
 	std::string MarkDown = "";
 
@@ -115,16 +119,19 @@ std::string Parse(std::string path)
 	{
 		NDocData nDocData;
 
-		nDocData.lines = NString::ToVector(NString::Split(FuncData[i], ")")[0]);
+		nDocData.lines = NString::ToVector(NString::SplitNoEmpty(FuncData[i], "{")[0]);
+
+		std::string lastLine = nDocData.lines[nDocData.lines.size() - 1];
+
+		if (NString::FullTrim(lastLine) == "")
+		{
+			nDocData.lines.erase(nDocData.lines.begin() + nDocData.lines.size() - 1);
+		}
+
+		std::map<std::string, std::string> ntData = parser.ParseFunction(nDocData.lines[nDocData.lines.size() - 1]);
+
+		nDocData.ident.Name = ntData["type"] + " " + ntData["name"] + " " + ntData["inputs"];
 		nDocData.type = "function";
-
-		std::string tmpName = NString::FullTrim(NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[0], " ")[1]);
-		std::string withinP = NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[1], ")")[0];
-
-		nDocData.ident.Name = tmpName + "(" + withinP + "); ";
-
-		nDocData.ident.Type = NString::Split(NString::Split(nDocData.lines[nDocData.lines.size() - 1], "(")[0], " ")[0];
-		nDocData.ident.Type = NString::FullTrim(nDocData.ident.Type);
 
 		FuncDoc.push_back(nDocData);
 	}
@@ -169,8 +176,10 @@ std::string Parse(std::string path)
 		nDocData.lines = NString::ToVector(NString::Split(MemberData[i], ";")[0]);
 		nDocData.type = "member";
 
-		nDocData.ident.Name = NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[1]);
-		nDocData.ident.Type = NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[0]);
+		std::map<std::string, std::string> ntData = parser.ParseMember(nDocData.lines[nDocData.lines.size() - 1]);
+
+		nDocData.ident.Name = ntData["name"];  //NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[1]);
+		nDocData.ident.Type = ntData["type"]; //NString::FullTrim(NString::Split(nDocData.lines[nDocData.lines.size() - 1], " ")[0]);
 
 		MemberDoc.push_back(nDocData);
 	}
@@ -193,7 +202,10 @@ std::string Process(std::vector<NDocData> data)
 		}
 		else
 		{
-			sData += "### **" + NString::ToUpper(p.type) + "**: " + NString::Split(p.ident.Name, "(")[0] + "\n\n";
+			std::string name = NString::FullTrim(NString::Split(p.ident.Name, "(")[0]);
+			name = NString::Split(name, " ")[NString::Split(name, " ").size() - 1];
+
+			sData += "### **" + NString::ToUpper(p.type) + "**: " + NString::FullTrim(name) + "\n\n";
 		}
 
 		sData += "``` " + p.ident.Type + " " + p.ident.Name + " ```" + "\n\n";
