@@ -15,7 +15,7 @@ std::string NProcessor::Process(std::vector<NDocData> data)
 			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n\n";
 		}
 
-		sData += "#### **Description:**\n" + NString::Split(p.lines[0], "//")[1] + "\n\n";
+		sData += "##### **Description:**" + NString::Split(p.lines[0], "//")[1] + "\n\n";
 	}
 
 	return sData;
@@ -36,7 +36,7 @@ std::string NProcessor::FunctionProcess(std::vector<NDocData> data)
 			sData += "" + NString::Split(p.lines[i], "//")[1] + "" + "\n\n";
 		}
 
-		sData += "#### **Description:**\n" + NString::Split(p.lines[0], "//")[1] + "\n\n";
+		sData += "##### **Description:**" + NString::Split(p.lines[0], "//")[1] + "\n\n";
 	}
 
 	return sData;
