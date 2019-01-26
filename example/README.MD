@@ -1,6 +1,6 @@
-### **CLASS**: FOO
+### **CLASS**: FOO : public XEN
 
-``` class FOO ```
+``` class FOO : public XEN ```
 
 DESC LINE 2
 
@@ -10,7 +10,7 @@ DESC LINE 1
 ----------
 ### **FUNCTION**: BAR
 
-``` void BAR(int x, int y, FOO* pFoo);  ```
+```  static void BAR (int x, int y, FOO* pFoo) const  ```
 
 INPUT LINE 1
 
@@ -45,7 +45,7 @@ DESC LINE 1
 
 ### **MEMBER**: pPrev
 
-``` FOO* pPrev ```
+``` static constexpr FOO* pPrev ```
 
 DESC LINE 2
 

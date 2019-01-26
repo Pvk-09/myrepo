@@ -2,7 +2,7 @@
 //-->DOC_CLASS
 //DESC LINE 1
 //DESC LINE 2
-class FOO
+class FOO : public XEN
 {
 public:
 	//-->DOC_FUNC
@@ -11,7 +11,7 @@ public:
 	//INPUT LINE 2
 	//INPUT LINE 3
 	//OUTPUT
-	void BAR(int x, int y, FOO* pFoo)
+	static void BAR(int x, int y, FOO* pFoo) const 
 	{
 	}
 	
@@ -24,7 +24,7 @@ public:
 	//DESC LINE 1
 	//DESC LINE 2
 	//DESC LINE 3
-	FOO* pPrev;
+	static constexpr FOO* pPrev;
 };
 
 //-->DOC_STRUCT
