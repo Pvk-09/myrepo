@@ -23,6 +23,7 @@
     <ClCompile Include="NFile.cpp" />
     <ClCompile Include="NParser.cpp" />
     <ClCompile Include="NString.cpp" />
+    <ClCompile Include="NProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NDocData.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="NIdent.h" />
     <ClInclude Include="NParser.h" />
     <ClInclude Include="NString.h" />
+    <ClInclude Include="NProcessor.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
