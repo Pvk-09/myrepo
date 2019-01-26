@@ -32,6 +32,7 @@
     <ClInclude Include="NParser.h" />
     <ClInclude Include="NString.h" />
     <ClInclude Include="NProcessor.h" />
+    <ClInclude Include="NWin.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
