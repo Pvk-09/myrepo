@@ -11,6 +11,7 @@ struct NDocData
 {
 	std::vector<std::string> lines;
 	std::string type;
+	std::string code;
 	NIdent ident;
 };
 
