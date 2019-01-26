@@ -39,6 +39,9 @@
     <ClInclude Include="NDocData.h">
       <Filter>Header Files\Structures</Filter>
     </ClInclude>
+    <ClInclude Include="NParser.h">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NFile.cpp">
@@ -49,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="Entry.cpp">
       <Filter>Source Files\Entry</Filter>
+    </ClCompile>
+    <ClCompile Include="NParser.cpp">
+      <Filter>Source Files\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

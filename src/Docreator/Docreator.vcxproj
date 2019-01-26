@@ -21,12 +21,14 @@
   <ItemGroup>
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="NFile.cpp" />
+    <ClCompile Include="NParser.cpp" />
     <ClCompile Include="NString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NDocData.h" />
     <ClInclude Include="NFile.h" />
     <ClInclude Include="NIdent.h" />
+    <ClInclude Include="NParser.h" />
     <ClInclude Include="NString.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
