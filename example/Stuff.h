@@ -2,7 +2,7 @@
 //-->DOC_CLASS
 //DESC LINE 1
 //DESC LINE 2
-class FOO : public XEN
+class FOO final : public XEN
 {
 public:
 	//-->DOC_FUNC

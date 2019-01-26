@@ -1,6 +1,6 @@
-### **CLASS**: FOO : public XEN
+### **CLASS**: FOO
 
-``` class FOO : public XEN ```
+``` class FOO final : public XEN ```
 
 DESC LINE 2
 
@@ -10,7 +10,7 @@ DESC LINE 1
 ----------
 ### **FUNCTION**: BAR
 
-```  static void BAR (int x, int y, FOO* pFoo) const  ```
+``` static void BAR(int x, int y, FOO* pFoo) const ```
 
 INPUT LINE 1
 
