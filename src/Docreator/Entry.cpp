@@ -18,27 +18,56 @@ auto main(int argc, char** argv) -> int
 {
 	UNREFERENCED_PARAMETER(argc);
 	UNREFERENCED_PARAMETER(argv);
+A:
+	std::string cmd;
+	std::cout << "Enter command: ";
+	std::cin >> cmd;
 
-	std::string path;
-	std::cout << "Enter the path: ";
-	std::cin >> path;
-
-	std::vector<std::string> paths = NFile::GetFiles(path);
-
-	for (const auto& p : paths)
+	if (NString::ToLower(cmd) == "doc")
 	{
-		std::string ext = "";
-	    std::vector<std::string> fullVec = NString::Split(p, ".");
-		if (fullVec.size() >= 1)
+		std::string path;
+		std::cout << "Enter the path: ";
+		std::cin >> path;
+
+		std::vector<std::string> paths = NFile::GetFiles(path);
+
+		for (const auto& p : paths)
 		{
-			ext = fullVec[fullVec.size() - 1];
-			if (FileValidation(ext))
+			std::string ext = "";
+			std::vector<std::string> fullVec = NString::Split(p, ".");
+			if (fullVec.size() >= 1)
 			{
-				std::string mdData = Parse(path + "\\" + p);
-				NFile::WriteAllText(path + "\\" + NString::ToUpper(NString::Split(p, ".")[0]) + ".MD", mdData);
+				ext = fullVec[fullVec.size() - 1];
+				if (FileValidation(ext))
+				{
+					std::string mdData = Parse(path + "\\" + p);
+					if (mdData != "E")
+					{
+						NFile::WriteAllText(path + "\\" + NString::Split(p, ".")[0] + ".MD", mdData);
+					}
+				}
 			}
 		}
 	}
+	else if (NString::ToLower(cmd) == "index")
+	{
+		std::string path;
+		std::cout << "Enter the path: ";
+		std::cin >> path;
+
+		std::vector<std::string> paths = NFile::GetFiles(path);
+
+		for (const auto& p : paths)
+		{
+
+		}
+	}
+	else
+	{
+		goto A;
+	}
+
+	
 
 	return false;
 }
@@ -69,6 +98,7 @@ bool FileValidation(const std::string& ext)
 
 std::string Parse(std::string path)
 {
+	int emptyFlag = 0;
 	NParser* parser = new NParser();
 	NProcessor* processor = new NProcessor();
 
@@ -107,8 +137,8 @@ std::string Parse(std::string path)
 	{
 		MarkDown += "**CLASSES:**\n";
 		MarkDown += "============\n";
-		MarkDown += "----------\n";
 	}
+	else emptyFlag++;
 
 	MarkDown += processor->Process(ClassDoc);
 
@@ -153,8 +183,8 @@ std::string Parse(std::string path)
 	{
 		MarkDown += "**FUNCTIONS & METHODS:**\n";
 		MarkDown += "========================\n";
-		MarkDown += "----------\n";
 	}
+	else emptyFlag++;
 
 	MarkDown += processor->FunctionProcess(FuncDoc);
 
@@ -194,8 +224,8 @@ std::string Parse(std::string path)
 	{
 		MarkDown += "**STRUCTURES:**\n";
 		MarkDown += "===============\n";
-		MarkDown += "----------\n";
 	}
+	else emptyFlag++;
 
 	MarkDown += processor->Process(StructDoc);
 	
@@ -228,9 +258,9 @@ std::string Parse(std::string path)
 	if (MemberData.size() > 1)
 	{
 		MarkDown += "**MEMBERS:**\n";
-		MarkDown += "===============\n";
-		MarkDown += "----------\n";
+		MarkDown += "============\n";
 	}
+	else emptyFlag++;
 
 	MarkDown += processor->Process(MemberDoc);
 	
@@ -243,6 +273,11 @@ std::string Parse(std::string path)
 
 	delete processor;
 	delete parser;
+
+	if (emptyFlag == 4)
+	{
+		return "E";
+	}
 
 	return MarkDown;
 }
